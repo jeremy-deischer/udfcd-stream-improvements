@@ -1,88 +1,35 @@
-<style>
-  body {
-    padding: 0;
-    margin: 0;
-    background: whitesmoke;
-    font-family: Montserrat, serif;
-  }
+/* custom CSS rules */
 
-  header,
-  footer {
-    background: #245574;
-    color: white;
-    padding: 18px 0;
-    box-shadow: 0px 1px 3px #245574;
-  }
+/* display none for layout but be careful of license restrictions */
+.mapbox-logo, .leaflet-control-attribution {
+  display: none;
 
-  .container {
-    width: 960px;
-    margin: 18px auto;
-  }
+}
+.legend-large, .legend-small {
+    border-radius: 50%;
+}
 
-  h1 {
-    width: 960px;
-    margin: 0 auto;
-    font-size: 2em;
-  }
-
-  a {
-    color: white;
-  }
-
-  ul li {
-    margin: 0 0 8px 0;
-  }
-
-  #map {
-    width: 100%;
-    height: 600px;
-  }
-
-  .states {
-    fill: #468fa6;
-    stroke: whitesmoke;
-  }
-
-  .hover {
-    stroke: #fe955f;
-    stroke-width: 2;
-  }
-
-  .tooltip {
+hr.small, hr.large {
+    width: 83px;
     position: absolute;
-    min-width: 60px;
-    min-height: 28px;
-    padding: 6px 12px 3px;
-    color: whitesmoke;
-    background: #245574;
-    border-radius: 2px;
-    pointer-events: none;
-    opacity: 0;
-  }
+    top: -8px;
+    left: 55px;
+    border: 1px dashed #ccc;     /* overwrite assembly.css rule */
+    margin-top: 8px;            /* overwrite assembly.css rule */
+}
 
-  .facility {
-    fill: #cf5635;
-    stroke: white;
-    stroke-width: .3;
-    opacity: .8;
+.boys {
+    color: #6E77B0;
+}
 
-  }
+.girls {
+    color: #D96D02;
+}
 
-  .legend circle {
-    fill: none;
-    stroke: #ccc;
-  }
+#info{
+  z-index:1000;
+}
 
-  .legend text {
-    fill: #777;
-    font: 10px sans-serif;
-    text-anchor: middle;
-  }
-
-  .filter {
-    position: absolute;
-    right: 48px;
-    width: 260px;
-    font-size: 1.3em;
-  }
-</style>
+body {
+    font-family: "Work Sans", sans-serif;
+}
