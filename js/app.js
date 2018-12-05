@@ -39,10 +39,33 @@
   });
 
   function drawBasinMap(data) {
-
+    //default option for styling
+    var options = {
+      pointToLayer: function(feature, ll) {
+        return L.circleMarker(ll, {
+          opacity: 1,
+          weight: 2,
+          fillOpacity: 0,
+        })
+      }
+    }
+    var basins = L.geoJson(data, options).addTo(map)
+    return(basins)
   } //end of drawBasinMap
 
   function drawStreamMap(data) {
+
+    //default option for styling
+    var options = {
+      pointToLayer: function(feature, ll) {
+        return L.circleMarker(ll, {
+          opacity: 1,
+          weight: 0.5,
+          fillOpacity: 0,
+        })
+      }
+    }
+    var streams = L.geoJson(data, options).addTo(map)
 
   } //end of drawStreamMap
 
@@ -58,7 +81,7 @@
         })
       }
     }
-    
+
     var boundary = L.geoJson(data, options).addTo(map)
 
     // Fit Bounds of Map to district boundary
@@ -155,6 +178,57 @@
 
 
   } //end of slider control
+
+
+
+      function addFilter(facilityData, facilities) {
+
+        // select the map element
+        var dropdown = d3.select('#map')
+          .append('select') // append a new select element
+          .attr('class', 'filter') // add a class name
+          .on('change', onchange) //listen for change
+
+        // array to hold select options
+        var uniqueTypes = ["All facilities"];
+
+        // loop through all features and push unique types to array
+        facilityData.forEach(function(facility) {
+          // if the type is not included in the array, push it to the array
+          if (!uniqueTypes.includes(facility.Industry_Type)) uniqueTypes.push(facility.Industry_Type)
+        })
+
+        // sort types alphabeticaly in array
+        uniqueTypes.sort();
+
+        // ["All facilities", "Chemicals", "Metals", "Minerals", "Other", "Petroleum and Natural Gas Systems", "Power Plants", "Waste"]
+        console.log(uniqueTypes)
+
+        // select all the options (that don't exist yet)
+        dropdown.selectAll('option')
+          .data(uniqueTypes).enter() // attach our array as data
+          .append("option") // append a new option element for each data item
+          .text(function(d) {
+            return d // use the item as text
+          })
+          .attr("value", function(d) {
+            return d // use the time as value attribute
+          })
+
+        function onchange() {
+          // get the current value from the select element
+          var val = d3.select('select').property('value')
+
+          // style the display of the facilities
+          facilities.style("display", function(d) {
+            // if it's our default, show them all with inline
+            if (val === "All facilities") return "inline"
+            // otherwise, if each industry type doesn't match the value
+            if (d.Industry_Type != val) return "none" // don't display it
+          })
+        }
+
+      } //end of addFilter
 
   // function drawLegend(data) {
   //   // create Leaflet control for the legend
