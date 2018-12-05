@@ -19,11 +19,23 @@
 
 
   //AJAX call to load Basins
-  $.getJSON("data/Basins.json", function(data){
+  $.getJSON("data/Basins.json", "data/District.json", function(data){
+    drawBasinMap(data)
+  });
+
+  //AJAX call to load streams
+  $.getJSON("data/Streams.json", function(data){
     drawMap(data)
   });
 
+  //AJAX call to load district boundary
+  $.getJSON("data/District.json", function(data){
+    drawMap(data)
+  });
 
+  function drawBasinMap (data){
+    
+  }//end of drawBasinMap
 
   function drawMap(data) {
 
@@ -38,8 +50,15 @@
       }
     }
 
-    // create separate layers from GeoJSON data
-    var basins = L.geoJson(data, options).addTo(map);
+    var boundary = L.geoJson(data, options).addTo(map)
+    console.log(boundary);
+
+    // Fit Bounds of Map to district boundary
+        map.fitBounds(girlsLayer.getBounds());
+
+        // adjust zoom level of map
+        map.setZoom(map.getZoom() - .4);
+
 
     basin.setStyle({
       color: '#6E77B0',
