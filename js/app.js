@@ -17,18 +17,17 @@
     accessToken: accessToken
   }).addTo(map);
 
-  // var map = new mapboxgl.Map({
-  //     container: 'map',
-  //     style: 'mapbox://styles/iconeng/civjrd2la004z2immqynhr4fd',
-  //     zoom: 13,
-  //     center: [-104.705, 40.42],
-  //     hash: true,
-  //     preserveDrawingBuffer: true
-  // });
+
+  //AJAX call to load Basins
+  $.getJSON("data/Basins.json", function(data){
+    drawMap(data)
+  });
+
 
 
   function drawMap(data) {
 
+    //default option for styling
     var options = {
       pointToLayer: function(feature, ll) {
         return L.circleMarker(ll, {
@@ -39,30 +38,17 @@
       }
     }
 
-    // create 2 separate layers from GeoJSON data
-    var girlsLayer = L.geoJson(data, options).addTo(map),
-      boysLayer = L.geoJson(data, options).addTo(map),
-      basins = L.geoJson(data,options).addTo(map);
+    // create separate layers from GeoJSON data
+    var basins = L.geoJson(data, options).addTo(map);
 
-    girlsLayer.setStyle({
-      color: '#D96D02',
-    });
-    boysLayer.setStyle({
+    basin.setStyle({
       color: '#6E77B0',
     });
-
-    // fit the bounds of the map to one of the layers
-    map.fitBounds(girlsLayer.getBounds());
-
-    // adjust zoom level of map
-    map.setZoom(map.getZoom() - .4);
 
     resizeCircles(girlsLayer, boysLayer, 1);
     sequenceUI(girlsLayer, boysLayer);
 
   } // end drawMap()
-
-
 
   function sequenceUI(girlsLayer, boysLayer) {
 
