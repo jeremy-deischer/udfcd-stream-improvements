@@ -2,20 +2,29 @@
 
   var map = L.map('map', {
     zoomSnap: .1,
-    center: [-104.75, 39.75],
-    zoom: 7,
-    minZoom: 6,
-    maxZoom: 9,
+    center: [39.75, -104.97],
+    zoom: 11,
+    minZoom: 10,
+    maxZoom: 15,
   });
 
-  var accessToken = 'pk.eyJ1IjoiamRlaXNjaGVyIiwiYSI6ImNqbzNmMWxjODB3anozcHF5djk4eWR6M3QifQ.Vdoh3NqDKBWCD9LZ_lj1sA'
+  var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken, {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     maxZoom: 18,
-    id: 'mapbox.light',
+    id: 'mapbox.outdoors',
     accessToken: accessToken
   }).addTo(map);
+
+  // var map = new mapboxgl.Map({
+  //     container: 'map',
+  //     style: 'mapbox://styles/iconeng/civjrd2la004z2immqynhr4fd',
+  //     zoom: 13,
+  //     center: [-104.705, 40.42],
+  //     hash: true,
+  //     preserveDrawingBuffer: true
+  // });
 
 
   function drawMap(data) {
