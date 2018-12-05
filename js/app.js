@@ -19,23 +19,54 @@
 
 
   //AJAX call to load Basins
-  $.getJSON("data/Basins.json", "data/District.json", function(data){
+  $.getJSON("data/Basins.json", function(data) {
     drawBasinMap(data)
   });
 
   //AJAX call to load streams
-  $.getJSON("data/Streams.json", function(data){
-    drawMap(data)
+  $.getJSON("data/Streams.json", function(data) {
+    drawStreamMap(data)
   });
 
   //AJAX call to load district boundary
-  $.getJSON("data/District.json", function(data){
+  $.getJSON("data/District.json", function(data) {
+    drawDistrictMap(data)
+  });
+
+  //AJAX call to load district boundary
+  $.getJSON("data/channelImprovementsLinear.json", function(data) {
     drawMap(data)
   });
 
-  function drawBasinMap (data){
+  function drawBasinMap(data) {
+
+  } //end of drawBasinMap
+
+  function drawStreamMap(data) {
+
+  } //end of drawStreamMap
+
+  function drawDistrictMap(data) {
+
+    //default option for styling
+    var options = {
+      pointToLayer: function(feature, ll) {
+        return L.circleMarker(ll, {
+          opacity: 1,
+          weight: 2,
+          fillOpacity: 0,
+        })
+      }
+    }
     
-  }//end of drawBasinMap
+    var boundary = L.geoJson(data, options).addTo(map)
+
+    // Fit Bounds of Map to district boundary
+    map.fitBounds(boundary.getBounds());
+
+    // adjust zoom level of map
+    map.setZoom(map.getZoom() - .4);
+  } //end of drawDistrictMap
 
   function drawMap(data) {
 
@@ -50,14 +81,13 @@
       }
     }
 
-    var boundary = L.geoJson(data, options).addTo(map)
-    console.log(boundary);
+    var channelImprov = L.geoJson(data, options).addTo(map)
 
     // Fit Bounds of Map to district boundary
-        map.fitBounds(girlsLayer.getBounds());
+    map.fitBounds(girlsLayer.getBounds());
 
-        // adjust zoom level of map
-        map.setZoom(map.getZoom() - .4);
+    // adjust zoom level of map
+    map.setZoom(map.getZoom() - .4);
 
 
     basin.setStyle({
@@ -94,7 +124,7 @@
     });
 
     // same as above
-    gradeControl.onAdd = function (map) {
+    gradeControl.onAdd = function(map) {
 
       var grade = L.DomUtil.get("current-grade");
 
@@ -218,98 +248,98 @@
   //   legendControl.addTo(map);
   // } //end of drawLegend
 
-  function retreiveInfo(boysLayer, currentGrade) {
-    // select the element and reference with variable
-    // and hide it from view initially
-    var info = $('#info').hide();
-
-
-    // since boysLayer is on top, use to detect mouseover events
-    boysLayer.on('mouseover', function(e) {
-
-      // remove the none class to display and show
-      info.show();
-
-      // access properties of target layer
-      var props = e.layer.feature.properties;
-
-      // populate HTML elements with relevant info
-      $('#info span').html(props.COUNTY);
-      $(".girls span:first-child").html('(grade ' + currentGrade + ')');
-      $(".boys span:first-child").html('(grade ' + currentGrade + ')');
-      $(".girls span:last-child").html(Number(props['G' + currentGrade]).toLocaleString());
-      $(".boys span:last-child").html(Number(props['B' + currentGrade]).toLocaleString());
-
-      // raise opacity level as visual affordance
-      e.layer.setStyle({
-        fillOpacity: .6
-      });
-
-      // empty arrays for boys and girls values
-      var girlsValues = [],
-        boysValues = [];
-
-      // loop through the grade levels and push values into those arrays
-      for (var i = 1; i <= 8; i++) {
-        girlsValues.push(props['G' + i]);
-        boysValues.push(props['B' + i]);
-      }
-
-      $('.girlspark').sparkline(girlsValues, {
-          width: '200px',
-          height: '30px',
-          lineColor: '#D96D02',
-          fillColor: '#d98939 ',
-          spotRadius: 0,
-          lineWidth: 2
-      });
-
-      $('.boyspark').sparkline(boysValues, {
-          width: '200px',
-          height: '30px',
-          lineColor: '#6E77B0',
-          fillColor: '#878db0',
-          spotRadius: 0,
-          lineWidth: 2
-      });
-
-    }); //end of mouse over boys layer
-
-    // hide the info panel when mousing off layergroup and remove affordance opacity
-    boysLayer.on('mouseout', function(e) {
-
-      // hide the info panel
-      info.hide();
-
-      // reset the layer style
-      e.layer.setStyle({
-        fillOpacity: 0
-      });
-    });
-
-    // when the mouse moves on the document
-    $(document).mousemove(function(e) {
-      // first offset from the mouse position of the info window
-      info.css({
-        "left": e.pageX + 6,
-        "top": e.pageY - info.height() - 25
-      });
-
-      // if it crashes into the top, flip it lower right
-      if (info.offset().top < 4) {
-        info.css({
-          "top": e.pageY + 15
-        });
-      }
-      // if it crashes into the right, flip it to the left
-      if (info.offset().left + info.width() >= $(document).width() - 40) {
-        info.css({
-          "left": e.pageX - info.width() - 80
-        });
-      }
-    });
-
-  } // end of retrieveInfo
+  // function retreiveInfo(boysLayer, currentGrade) {
+  //   // select the element and reference with variable
+  //   // and hide it from view initially
+  //   var info = $('#info').hide();
+  //
+  //
+  //   // since boysLayer is on top, use to detect mouseover events
+  //   boysLayer.on('mouseover', function(e) {
+  //
+  //     // remove the none class to display and show
+  //     info.show();
+  //
+  //     // access properties of target layer
+  //     var props = e.layer.feature.properties;
+  //
+  //     // populate HTML elements with relevant info
+  //     $('#info span').html(props.COUNTY);
+  //     $(".girls span:first-child").html('(grade ' + currentGrade + ')');
+  //     $(".boys span:first-child").html('(grade ' + currentGrade + ')');
+  //     $(".girls span:last-child").html(Number(props['G' + currentGrade]).toLocaleString());
+  //     $(".boys span:last-child").html(Number(props['B' + currentGrade]).toLocaleString());
+  //
+  //     // raise opacity level as visual affordance
+  //     e.layer.setStyle({
+  //       fillOpacity: .6
+  //     });
+  //
+  //     // empty arrays for boys and girls values
+  //     var girlsValues = [],
+  //       boysValues = [];
+  //
+  //     // loop through the grade levels and push values into those arrays
+  //     for (var i = 1; i <= 8; i++) {
+  //       girlsValues.push(props['G' + i]);
+  //       boysValues.push(props['B' + i]);
+  //     }
+  //
+  //     $('.girlspark').sparkline(girlsValues, {
+  //       width: '200px',
+  //       height: '30px',
+  //       lineColor: '#D96D02',
+  //       fillColor: '#d98939 ',
+  //       spotRadius: 0,
+  //       lineWidth: 2
+  //     });
+  //
+  //     $('.boyspark').sparkline(boysValues, {
+  //       width: '200px',
+  //       height: '30px',
+  //       lineColor: '#6E77B0',
+  //       fillColor: '#878db0',
+  //       spotRadius: 0,
+  //       lineWidth: 2
+  //     });
+  //
+  //   }); //end of mouse over boys layer
+  //
+  //   // hide the info panel when mousing off layergroup and remove affordance opacity
+  //   boysLayer.on('mouseout', function(e) {
+  //
+  //     // hide the info panel
+  //     info.hide();
+  //
+  //     // reset the layer style
+  //     e.layer.setStyle({
+  //       fillOpacity: 0
+  //     });
+  //   });
+  //
+  //   // when the mouse moves on the document
+  //   $(document).mousemove(function(e) {
+  //     // first offset from the mouse position of the info window
+  //     info.css({
+  //       "left": e.pageX + 6,
+  //       "top": e.pageY - info.height() - 25
+  //     });
+  //
+  //     // if it crashes into the top, flip it lower right
+  //     if (info.offset().top < 4) {
+  //       info.css({
+  //         "top": e.pageY + 15
+  //       });
+  //     }
+  //     // if it crashes into the right, flip it to the left
+  //     if (info.offset().left + info.width() >= $(document).width() - 40) {
+  //       info.css({
+  //         "left": e.pageX - info.width() - 80
+  //       });
+  //     }
+  //   });
+  //
+  // } // end of retrieveInfo
 
 
 
