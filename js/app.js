@@ -66,10 +66,13 @@
       var channelImprov = L.geoJson(data, {
           onEachFeature: function(feature, layer) {
 
+            console.log(feature.properties.type)
+
             //Assigning color to each type of stream Improvements
             if (feature.properties.type.riprap) {
               layer.setStyle({
-                color: 'red'
+                color: 'red',
+                weight: 5
               });
             } else if (feature.properties.type.boulders) {
               layer.setStyle({
@@ -96,22 +99,12 @@
               });
             });
 
+            //Create tooltip for channel improvement
+            var improvementTooltip = feature.properties.type;
+
+          layer.bindTooltip(improvementTooltip);
           }
-
         }).addTo(map);
-        //default option for styling
-        var options = {
-
-
-        }
-
-
-
-
-
-
-
-
 
       } // end drawMap()
 
