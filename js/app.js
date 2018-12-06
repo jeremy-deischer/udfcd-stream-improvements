@@ -188,8 +188,11 @@
     // array to hold select options
     var uniqueTypes = ["All facilities"];
 
+    console.log(uniqueTypes)
+    console.log(data)
+
     data.forEach(function(layer){
-      var uniqueTypes = layerfeature.properties[str_name];
+      var uniqueTypes = layer.feature.properties.str_name;
       values.push(value);
     });
 
