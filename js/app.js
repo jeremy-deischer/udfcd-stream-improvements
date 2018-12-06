@@ -33,7 +33,6 @@
     drawMap(data)
   });
 
-
   function drawDistrictMap(data) {
 
     //default option for styling
@@ -77,15 +76,15 @@
           });
         } else if (feature.properties.type.excavation) {
           layer.setStyle({
-            color: 'green'
+            color: 'blue'
           });
         } else if (feature.properties.type.lowflow) {
           layer.setStyle({
-            color: 'green'
+            color: 'yellow'
           });
         } else if (feature.properties.type.toe) {
           layer.setStyle({
-            color: 'green'
+            color: 'black'
           });
         }
 
@@ -110,120 +109,121 @@
 
         //Create tooltip for channel improvement
         var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
-         feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st + 
+         feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
           '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString();
 
         layer.bindTooltip(improvementTooltip);
       }
     }).addTo(map);
 
+    addFilter(channelImprov);
   } // end drawMap()
 
-  function sequenceUI(girlsLayer, boysLayer) {
-
-    // create Leaflet control for the slider
-    var sliderControl = L.control({
-      position: 'bottomleft'
-    });
-
-    sliderControl.onAdd = function(map) {
-
-      var controls = L.DomUtil.get("slider");
-
-      L.DomEvent.disableScrollPropagation(controls);
-      L.DomEvent.disableClickPropagation(controls);
-
-      return controls;
-    }
-
-    sliderControl.addTo(map); // sequenceUI function body
-
-    // create Leaflet control for the current grade output
-    var gradeControl = L.control({
-      position: 'bottomleft'
-    });
-
-    // same as above
-    gradeControl.onAdd = function(map) {
-
-      var grade = L.DomUtil.get("current-grade");
-
-      L.DomEvent.disableScrollPropagation(grade);
-      L.DomEvent.disableClickPropagation(grade);
-
-      return grade;
-
-    }
-
-    gradeControl.addTo(map);
-
-    // select the grade output we just added to the map
-    var output = $('#current-grade span');
-
-    //select the slider's input and listen for change
-    $('#slider input[type=range]')
-      .on('input', function() {
-
-        // current value of slider is current grade level
-        var currentGrade = this.value;
-
-
-        // update the output
-        output.html(currentGrade);
-
-      });
-
-
-  } //end of slider control
-
-  //d3 to create dropdown of all the streams
-  // function addFilter(data) {
+  // function sequenceUI(data) {
   //
-  //   // select the map element
-  //   var dropdown = d3.select('#map')
-  //     .append('select') // append a new select element
-  //     .attr('class', 'filter') // add a class name
-  //     .on('change', onchange) //listen for change
-  //
-  //   // array to hold select options
-  //   var uniqueTypes = ["All facilities"];
-  //
-  //   data.forEach(function(layer){
-  //     var uniqueTypes = layerfeature.properties[str_name];
-  //     values.push(value);
+  //   // create Leaflet control for the slider
+  //   var sliderControl = L.control({
+  //     position: 'bottomleft'
   //   });
   //
-  //   // sort types alphabeticaly in array
-  //   uniqueTypes.sort();
+  //   sliderControl.onAdd = function(map) {
   //
-  //   //Log array of unique stream names to console.
-  //   console.log(uniqueTypes)
+  //     var controls = L.DomUtil.get("slider");
   //
-  //   // select all the options (that don't exist yet)
-  //   dropdown.selectAll('option')
-  //     .data(uniqueTypes).enter() // attach our array as data
-  //     .append("option") // append a new option element for each data item
-  //     .text(function(d) {
-  //       return d // use the item as text
-  //     })
-  //     .attr("value", function(d) {
-  //       return d // use the time as value attribute
-  //     })
+  //     L.DomEvent.disableScrollPropagation(controls);
+  //     L.DomEvent.disableClickPropagation(controls);
   //
-  //   function onchange() {
-  //     // get the current value from the select element
-  //     var val = d3.select('select').property('value')
-  //
-  //     // style the display of the facilities
-  //     facilities.style("display", function(d) {
-  //       // if it's our default, show them all with inline
-  //       if (val === "All facilities") return "inline"
-  //       // otherwise, if each industry type doesn't match the value
-  //       if (d.Industry_Type != val) return "none" // don't display it
-  //     })
+  //     return controls;
   //   }
   //
-  // } //end of addFilter
+  //   sliderControl.addTo(map); // sequenceUI function body
+  //
+  //   // create Leaflet control for the current grade output
+  //   var gradeControl = L.control({
+  //     position: 'bottomleft'
+  //   });
+  //
+  //   // same as above
+  //   gradeControl.onAdd = function(map) {
+  //
+  //     var grade = L.DomUtil.get("current-grade");
+  //
+  //     L.DomEvent.disableScrollPropagation(grade);
+  //     L.DomEvent.disableClickPropagation(grade);
+  //
+  //     return grade;
+  //
+  //   }
+  //
+  //   gradeControl.addTo(map);
+  //
+  //   // select the grade output we just added to the map
+  //   var output = $('#current-grade span');
+  //
+  //   //select the slider's input and listen for change
+  //   $('#slider input[type=range]')
+  //     .on('input', function() {
+  //
+  //       // current value of slider is current grade level
+  //       var currentGrade = this.value;
+  //
+  //
+  //       // update the output
+  //       output.html(currentGrade);
+  //
+  //     });
+  //
+  //
+  // } //end of slider control
+
+  // d3 to create dropdown of all the streams
+  function addFilter(data) {
+
+    // select the map element
+    var dropdown = d3.select('#map')
+      .append('select') // append a new select element
+      .attr('class', 'filter') // add a class name
+      .on('change', onchange) //listen for change
+
+    // array to hold select options
+    var uniqueTypes = ["All facilities"];
+
+    data.forEach(function(layer){
+      var uniqueTypes = layerfeature.properties[str_name];
+      values.push(value);
+    });
+
+    // sort types alphabeticaly in array
+    uniqueTypes.sort();
+
+    //Log array of unique stream names to console.
+    console.log(uniqueTypes)
+
+    // select all the options (that don't exist yet)
+    dropdown.selectAll('option')
+      .data(uniqueTypes).enter() // attach our array as data
+      .append("option") // append a new option element for each data item
+      .text(function(d) {
+        return d // use the item as text
+      })
+      .attr("value", function(d) {
+        return d // use the time as value attribute
+      })
+
+    function onchange() {
+      // get the current value from the select element
+      var val = d3.select('select').property('value')
+
+      // style the display of the facilities
+      facilities.style("display", function(d) {
+        // if it's our default, show them all with inline
+        if (val === "All facilities") return "inline"
+        // otherwise, if each industry type doesn't match the value
+        if (d.Industry_Type != val) return "none" // don't display it
+      })
+    }
+
+  } //end of addFilter
 
   // function drawLegend(data) {
   //   // create Leaflet control for the legend
