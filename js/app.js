@@ -53,70 +53,64 @@
     return (basins)
   } //end of drawBasinMap
 
-  function drawStreamMap(data) {
-
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 0.5,
-          fillOpacity: 0,
-        })
-      }
-    }
-    var streams = L.geoJson(data, options).addTo(map)
-
-  } //end of drawStreamMap
 
   function drawDistrictMap(data) {
 
     //default option for styling
     var options = {
-      color: 'red',
+      color: 'gray',
       weight: 5,
       fillOpacity: 0,
     }
 
-    var boundary = L.geoJson(data, options).addTo(map)
+    var boundary = L.geoJson(data, options).addTo(map);
+    boundary.bringToFront();
 
-    // Fit Bounds of Map to district boundary
-    map.fitBounds(boundary.getBounds());
 
-    // adjust zoom level of map
-    map.setZoom(map.getZoom() - .4);
   } //end of drawDistrictMap
 
-  function drawMap(data) {
+
+  function drawStreamMap(data) {
 
     //default option for styling
     var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 2,
-          fillOpacity: 0,
-        })
-      }
+      color: 'blue',
+      weight: 1
     }
+    var streams = L.geoJson(data, options).addTo(map)
 
-    var channelImprov = L.geoJson(data, options).addTo(map)
+  } //end of drawStreamMap
 
-    // Fit Bounds of Map to district boundary
-    map.fitBounds(girlsLayer.getBounds());
-
-    // adjust zoom level of map
-    map.setZoom(map.getZoom() - .4);
-
-
-    basin.setStyle({
-      color: '#6E77B0',
-    });
-
-    resizeCircles(girlsLayer, boysLayer, 1);
-    sequenceUI(girlsLayer, boysLayer);
-
-  } // end drawMap()
+  // function drawMap(data) {
+  //
+  //   //default option for styling
+  //   var options = {
+  //     pointToLayer: function(feature, ll) {
+  //       return L.circleMarker(ll, {
+  //         opacity: 1,
+  //         weight: 2,
+  //         fillOpacity: 0,
+  //       })
+  //     }
+  //   }
+  //
+  //   var channelImprov = L.geoJson(data, options).addTo(map)
+  //
+  //   // Fit Bounds of Map to district boundary
+  //   map.fitBounds(girlsLayer.getBounds());
+  //
+  //   // adjust zoom level of map
+  //   map.setZoom(map.getZoom() - .4);
+  //
+  //
+  //   basin.setStyle({
+  //     color: '#6E77B0',
+  //   });
+  //
+  //   resizeCircles(girlsLayer, boysLayer, 1);
+  //   sequenceUI(girlsLayer, boysLayer);
+  //
+  // } // end drawMap()
 
   function sequenceUI(girlsLayer, boysLayer) {
 
@@ -174,8 +168,6 @@
 
 
   } //end of slider control
-
-
 
   function addFilter(facilityData, facilities) {
 
