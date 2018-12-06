@@ -18,11 +18,6 @@
   }).addTo(map);
 
 
-  //AJAX call to load Basins
-  $.getJSON("data/Basins.json", function(data) {
-    drawBasinMap(data)
-  });
-
   //AJAX call to load streams
   $.getJSON("data/Streams.json", function(data) {
     drawStreamMap(data)
@@ -37,21 +32,6 @@
   $.getJSON("data/channelImprovementsLinear.json", function(data) {
     drawMap(data)
   });
-
-  function drawBasinMap(data) {
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 2,
-          fillOpacity: 0,
-        })
-      }
-    }
-    var basins = L.geoJson(data, options).addTo(map)
-    return (basins)
-  } //end of drawBasinMap
 
 
   function drawDistrictMap(data) {
