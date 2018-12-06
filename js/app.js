@@ -5,7 +5,7 @@
     center: [39.75, -104.97],
     zoom: 9,
     minZoom: 10,
-    maxZoom: 15,
+    maxZoom: 20,
   });
 
   var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
@@ -49,7 +49,6 @@
 
   } //end of drawDistrictMap
 
-
   function drawStreamMap(data) {
 
     //default option for styling
@@ -61,36 +60,18 @@
 
   } //end of drawStreamMap
 
-  // function drawMap(data) {
-  //
-  //   //default option for styling
-  //   var options = {
-  //     pointToLayer: function(feature, ll) {
-  //       return L.circleMarker(ll, {
-  //         opacity: 1,
-  //         weight: 2,
-  //         fillOpacity: 0,
-  //       })
-  //     }
-  //   }
-  //
-  //   var channelImprov = L.geoJson(data, options).addTo(map)
-  //
-  //   // Fit Bounds of Map to district boundary
-  //   map.fitBounds(girlsLayer.getBounds());
-  //
-  //   // adjust zoom level of map
-  //   map.setZoom(map.getZoom() - .4);
-  //
-  //
-  //   basin.setStyle({
-  //     color: '#6E77B0',
-  //   });
-  //
-  //   resizeCircles(girlsLayer, boysLayer, 1);
-  //   sequenceUI(girlsLayer, boysLayer);
-  //
-  // } // end drawMap()
+  function drawMap(data) {
+
+    //default option for styling
+    var options = {
+
+    }
+
+    var channelImprov = L.geoJson(data, options).addTo(map)
+
+    addFilter(data)
+
+  } // end drawMap()
 
   function sequenceUI(girlsLayer, boysLayer) {
 
@@ -149,7 +130,8 @@
 
   } //end of slider control
 
-  function addFilter(facilityData, facilities) {
+  //d3 to create dropdown of all the streams
+  function addFilter(streams) {
 
     // select the map element
     var dropdown = d3.select('#map')
@@ -160,10 +142,11 @@
     // array to hold select options
     var uniqueTypes = ["All facilities"];
 
+
     // loop through all features and push unique types to array
-    facilityData.forEach(function(facility) {
+    streams.forEach(function(facility) {
       // if the type is not included in the array, push it to the array
-      if (!uniqueTypes.includes(facility.Industry_Type)) uniqueTypes.push(facility.Industry_Type)
+      if (!uniqueTypes.includes(streams.properties.str_name)) uniqueTypes.push(streams.properties.str_name)
     })
 
     // sort types alphabeticaly in array
