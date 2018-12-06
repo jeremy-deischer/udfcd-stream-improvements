@@ -66,8 +66,6 @@
       var channelImprov = L.geoJson(data, {
           onEachFeature: function(feature, layer) {
 
-            console.log(feature.properties.type)
-
             //Assigning color to each type of stream Improvements
             if (feature.properties.type.riprap) {
               layer.setStyle({
@@ -75,6 +73,18 @@
                 weight: 5
               });
             } else if (feature.properties.type.boulders) {
+              layer.setStyle({
+                color: 'green'
+              });
+            }else if (feature.properties.type.excavation) {
+              layer.setStyle({
+                color: 'green'
+              });
+            }else if (feature.properties.type.lowflow) {
+              layer.setStyle({
+                color: 'green'
+              });
+            }else if (feature.properties.type.toe) {
               layer.setStyle({
                 color: 'green'
               });
@@ -100,7 +110,10 @@
             });
 
             //Create tooltip for channel improvement
-            var improvementTooltip = feature.properties.type;
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' + feature.properties.mdp_osp_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString();
+
+
 
           layer.bindTooltip(improvementTooltip);
           }
