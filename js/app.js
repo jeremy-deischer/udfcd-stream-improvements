@@ -20,21 +20,17 @@
 
   //AJAX call to load streams
   $.getJSON("data/Streams.json", function(data) {
-    drawStreamMap(data)
+    var options = {
+      color: 'blue',
+      weight: 1
+    }
+    var streams = L.geoJson(data, options).addTo(map)
+
+    addFilter(data)
   });
 
   //AJAX call to load district boundary
   $.getJSON("data/District.json", function(data) {
-    drawDistrictMap(data)
-  });
-
-  //AJAX call to load district boundary
-  $.getJSON("data/channelimprov.geojson", function(data) {
-    drawMap(data)
-  });
-
-  function drawDistrictMap(data) {
-
     //default option for styling
     var options = {
       color: 'gray',
@@ -43,21 +39,12 @@
     }
 
     var boundary = L.geoJson(data, options).addTo(map);
+  });
 
-  } //end of drawDistrictMap
-
-  function drawStreamMap(data) {
-
-    //default option for styling
-    var options = {
-      color: 'blue',
-      weight: 1
-    }
-    var streams = L.geoJson(data, options).addTo(map)
-
-    // addFilter(data)
-
-  } //end of drawStreamMap
+  //AJAX call to load district boundary
+  $.getJSON("data/channelimprov.geojson", function(data) {
+    drawMap(data)
+  });
 
   function drawMap(data) {
 
@@ -116,7 +103,6 @@
       }
     }).addTo(map);
 
-    addFilter(channelImprov);
   } // end drawMap()
 
   // function sequenceUI(data) {
@@ -186,15 +172,20 @@
       .on('change', onchange) //listen for change
 
     // array to hold select options
-    var uniqueTypes = ["All facilities"];
+    var uniqueTypes = ["All Drainageways"];
 
     console.log(uniqueTypes)
-    console.log(data)
+    // console.log(data.features.properties["length"])
 
-    data.forEach(function(layer){
-      var uniqueTypes = layer.feature.properties.str_name;
-      values.push(value);
-    });
+    data.features.forEach(function(data){
+        var uniqueTypes = data.features.properties.type;
+        values.push(value);
+    })
+
+    // for (var key in data){
+    //   var uniqueTypes = data.features.properties.str_name;
+    //   values.push(value);
+    // };
 
     // sort types alphabeticaly in array
     uniqueTypes.sort();
@@ -222,33 +213,12 @@
         // if it's our default, show them all with inline
         if (val === "All facilities") return "inline"
         // otherwise, if each industry type doesn't match the value
-        if (d.Industry_Type != val) return "none" // don't display it
+        if (d.year_of_st != val) return "none" // don't display it
       })
     }
 
   } //end of addFilter
 
-  // function drawLegend(data) {
-  //   // create Leaflet control for the legend
-  //   var legendControl = L.control({
-  //     position: 'bottomright'
-  //   });
-  //
-  //   // when the control is added to the map
-  //   legendControl.onAdd = function(map) {
-  //
-  //     // select the legend using id attribute of legend
-  //     var legend = L.DomUtil.get("legend");
-  //
-  //     // disable scroll and click functionality
-  //     L.DomEvent.disableScrollPropagation(legend);
-  //     L.DomEvent.disableClickPropagation(legend);
-  //
-  //     // return the selection
-  //     return legend;
-  //
-  //   }
-  //
   //   // loop through all features (i.e., the schools)
   //   var dataValues = data.features.map(function(school) {
   //     // for each grade in a school
