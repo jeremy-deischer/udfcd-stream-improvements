@@ -3,9 +3,9 @@
   var map = L.map('map', {
     zoomSnap: .1,
     center: [39.75, -104.97],
-    zoom: 11,
+    zoom: 9,
     minZoom: 10,
-    maxZoom: 15,
+    maxZoom: 20,
   });
 
   var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
@@ -18,239 +18,207 @@
   }).addTo(map);
 
 
-  //AJAX call to load Basins
-  $.getJSON("data/Basins.json", function(data) {
-    drawBasinMap(data)
-  });
-
   //AJAX call to load streams
   $.getJSON("data/Streams.json", function(data) {
-    drawStreamMap(data)
+    var options = {
+      color: 'blue',
+      weight: 1
+    }
+    var streams = L.geoJson(data, options).addTo(map)
+
+    addFilter(data)
   });
 
   //AJAX call to load district boundary
   $.getJSON("data/District.json", function(data) {
-    drawDistrictMap(data)
+    //default option for styling
+    var options = {
+      color: 'gray',
+      weight: 5,
+      fillOpacity: 0,
+    }
+
+    var boundary = L.geoJson(data, options).addTo(map);
   });
 
   //AJAX call to load district boundary
-  $.getJSON("data/channelImprovementsLinear.json", function(data) {
+  $.getJSON("data/channelimprov.geojson", function(data) {
     drawMap(data)
   });
 
-  function drawBasinMap(data) {
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 2,
-          fillOpacity: 0,
-        })
-      }
-    }
-    var basins = L.geoJson(data, options).addTo(map)
-    return(basins)
-  } //end of drawBasinMap
-
-  function drawStreamMap(data) {
-
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 0.5,
-          fillOpacity: 0,
-        })
-      }
-    }
-    var streams = L.geoJson(data, options).addTo(map)
-
-  } //end of drawStreamMap
-
-  function drawDistrictMap(data) {
-
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 2,
-          fillOpacity: 0,
-        })
-      }
-    }
-
-    var boundary = L.geoJson(data, options).addTo(map)
-
-    // Fit Bounds of Map to district boundary
-    map.fitBounds(boundary.getBounds());
-
-    // adjust zoom level of map
-    map.setZoom(map.getZoom() - .4);
-  } //end of drawDistrictMap
-
   function drawMap(data) {
 
-    //default option for styling
-    var options = {
-      pointToLayer: function(feature, ll) {
-        return L.circleMarker(ll, {
-          opacity: 1,
-          weight: 2,
-          fillOpacity: 0,
-        })
+    var channelImprov = L.geoJson(data, {
+      onEachFeature: function(feature, layer) {
+
+        //Assigning color to each type of stream Improvements
+        if (feature.properties.type.riprap) {
+          layer.setStyle({
+            color: 'red',
+            weight: 5
+          });
+        } else if (feature.properties.type.boulders) {
+          layer.setStyle({
+            color: 'green'
+          });
+        } else if (feature.properties.type.excavation) {
+          layer.setStyle({
+            color: 'blue'
+          });
+        } else if (feature.properties.type.lowflow) {
+          layer.setStyle({
+            color: 'yellow'
+          });
+        } else if (feature.properties.type.toe) {
+          layer.setStyle({
+            color: 'black'
+          });
+        }
+
+        // riprap, boulders, excavation, lowFlow, toe
+        // when mousing over a layer
+        layer.on('mouseover', function() {
+
+          // change the stroke color and bring that element to the front
+          layer.setStyle({
+            color: 'yellow'
+          }).bringToFront();
+        });
+
+        // on mousing off layer
+        layer.on('mouseout', function() {
+
+          // reset the layer style to its original stroke color
+          layer.setStyle({
+            color: 'blue'
+          });
+        });
+
+        //Create tooltip for channel improvement
+        var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+         feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+          '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString();
+
+        layer.bindTooltip(improvementTooltip);
       }
-    }
-
-    var channelImprov = L.geoJson(data, options).addTo(map)
-
-    // Fit Bounds of Map to district boundary
-    map.fitBounds(girlsLayer.getBounds());
-
-    // adjust zoom level of map
-    map.setZoom(map.getZoom() - .4);
-
-
-    basin.setStyle({
-      color: '#6E77B0',
-    });
-
-    resizeCircles(girlsLayer, boysLayer, 1);
-    sequenceUI(girlsLayer, boysLayer);
+    }).addTo(map);
 
   } // end drawMap()
 
-  function sequenceUI(girlsLayer, boysLayer) {
-
-    // create Leaflet control for the slider
-    var sliderControl = L.control({
-      position: 'bottomleft'
-    });
-
-    sliderControl.onAdd = function(map) {
-
-      var controls = L.DomUtil.get("slider");
-
-      L.DomEvent.disableScrollPropagation(controls);
-      L.DomEvent.disableClickPropagation(controls);
-
-      return controls;
-    }
-
-    sliderControl.addTo(map); // sequenceUI function body
-
-    // create Leaflet control for the current grade output
-    var gradeControl = L.control({
-      position: 'bottomleft'
-    });
-
-    // same as above
-    gradeControl.onAdd = function(map) {
-
-      var grade = L.DomUtil.get("current-grade");
-
-      L.DomEvent.disableScrollPropagation(grade);
-      L.DomEvent.disableClickPropagation(grade);
-
-      return grade;
-
-    }
-
-    gradeControl.addTo(map);
-
-    // select the grade output we just added to the map
-    var output = $('#current-grade span');
-
-    //select the slider's input and listen for change
-    $('#slider input[type=range]')
-      .on('input', function() {
-
-        // current value of slider is current grade level
-        var currentGrade = this.value;
-
-
-        // update the output
-        output.html(currentGrade);
-
-      });
-
-
-  } //end of slider control
-
-
-
-      function addFilter(facilityData, facilities) {
-
-        // select the map element
-        var dropdown = d3.select('#map')
-          .append('select') // append a new select element
-          .attr('class', 'filter') // add a class name
-          .on('change', onchange) //listen for change
-
-        // array to hold select options
-        var uniqueTypes = ["All facilities"];
-
-        // loop through all features and push unique types to array
-        facilityData.forEach(function(facility) {
-          // if the type is not included in the array, push it to the array
-          if (!uniqueTypes.includes(facility.Industry_Type)) uniqueTypes.push(facility.Industry_Type)
-        })
-
-        // sort types alphabeticaly in array
-        uniqueTypes.sort();
-
-        // ["All facilities", "Chemicals", "Metals", "Minerals", "Other", "Petroleum and Natural Gas Systems", "Power Plants", "Waste"]
-        console.log(uniqueTypes)
-
-        // select all the options (that don't exist yet)
-        dropdown.selectAll('option')
-          .data(uniqueTypes).enter() // attach our array as data
-          .append("option") // append a new option element for each data item
-          .text(function(d) {
-            return d // use the item as text
-          })
-          .attr("value", function(d) {
-            return d // use the time as value attribute
-          })
-
-        function onchange() {
-          // get the current value from the select element
-          var val = d3.select('select').property('value')
-
-          // style the display of the facilities
-          facilities.style("display", function(d) {
-            // if it's our default, show them all with inline
-            if (val === "All facilities") return "inline"
-            // otherwise, if each industry type doesn't match the value
-            if (d.Industry_Type != val) return "none" // don't display it
-          })
-        }
-
-      } //end of addFilter
-
-  // function drawLegend(data) {
-  //   // create Leaflet control for the legend
-  //   var legendControl = L.control({
-  //     position: 'bottomright'
+  // function sequenceUI(data) {
+  //
+  //   // create Leaflet control for the slider
+  //   var sliderControl = L.control({
+  //     position: 'bottomleft'
   //   });
   //
-  //   // when the control is added to the map
-  //   legendControl.onAdd = function(map) {
+  //   sliderControl.onAdd = function(map) {
   //
-  //     // select the legend using id attribute of legend
-  //     var legend = L.DomUtil.get("legend");
+  //     var controls = L.DomUtil.get("slider");
   //
-  //     // disable scroll and click functionality
-  //     L.DomEvent.disableScrollPropagation(legend);
-  //     L.DomEvent.disableClickPropagation(legend);
+  //     L.DomEvent.disableScrollPropagation(controls);
+  //     L.DomEvent.disableClickPropagation(controls);
   //
-  //     // return the selection
-  //     return legend;
+  //     return controls;
+  //   }
+  //
+  //   sliderControl.addTo(map); // sequenceUI function body
+  //
+  //   // create Leaflet control for the current grade output
+  //   var gradeControl = L.control({
+  //     position: 'bottomleft'
+  //   });
+  //
+  //   // same as above
+  //   gradeControl.onAdd = function(map) {
+  //
+  //     var grade = L.DomUtil.get("current-grade");
+  //
+  //     L.DomEvent.disableScrollPropagation(grade);
+  //     L.DomEvent.disableClickPropagation(grade);
+  //
+  //     return grade;
   //
   //   }
   //
+  //   gradeControl.addTo(map);
+  //
+  //   // select the grade output we just added to the map
+  //   var output = $('#current-grade span');
+  //
+  //   //select the slider's input and listen for change
+  //   $('#slider input[type=range]')
+  //     .on('input', function() {
+  //
+  //       // current value of slider is current grade level
+  //       var currentGrade = this.value;
+  //
+  //
+  //       // update the output
+  //       output.html(currentGrade);
+  //
+  //     });
+  //
+  //
+  // } //end of slider control
+
+  // d3 to create dropdown of all the streams
+  function addFilter(data) {
+
+    // select the map element
+    var dropdown = d3.select('#map')
+      .append('select') // append a new select element
+      .attr('class', 'filter') // add a class name
+      .on('change', onchange) //listen for change
+
+    // array to hold select options
+    var uniqueTypes = ["All Drainageways"];
+
+    console.log(uniqueTypes)
+    // console.log(data.features.properties["length"])
+
+    data.features.forEach(function(data){
+        var uniqueTypes = data.features.properties.type;
+        values.push(value);
+    })
+
+    // for (var key in data){
+    //   var uniqueTypes = data.features.properties.str_name;
+    //   values.push(value);
+    // };
+
+    // sort types alphabeticaly in array
+    uniqueTypes.sort();
+
+    //Log array of unique stream names to console.
+    console.log(uniqueTypes)
+
+    // select all the options (that don't exist yet)
+    dropdown.selectAll('option')
+      .data(uniqueTypes).enter() // attach our array as data
+      .append("option") // append a new option element for each data item
+      .text(function(d) {
+        return d // use the item as text
+      })
+      .attr("value", function(d) {
+        return d // use the time as value attribute
+      })
+
+    function onchange() {
+      // get the current value from the select element
+      var val = d3.select('select').property('value')
+
+      // style the display of the facilities
+      facilities.style("display", function(d) {
+        // if it's our default, show them all with inline
+        if (val === "All facilities") return "inline"
+        // otherwise, if each industry type doesn't match the value
+        if (d.year_of_st != val) return "none" // don't display it
+      })
+    }
+
+  } //end of addFilter
+
   //   // loop through all features (i.e., the schools)
   //   var dataValues = data.features.map(function(school) {
   //     // for each grade in a school
