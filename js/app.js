@@ -102,62 +102,62 @@
 
   } // end drawMap()
 
-  // function sequenceUI(data) {
-  //
-  //   // create Leaflet control for the slider
-  //   var sliderControl = L.control({
-  //     position: 'bottomleft'
-  //   });
-  //
-  //   sliderControl.onAdd = function(map) {
-  //
-  //     var controls = L.DomUtil.get("slider");
-  //
-  //     L.DomEvent.disableScrollPropagation(controls);
-  //     L.DomEvent.disableClickPropagation(controls);
-  //
-  //     return controls;
-  //   }
-  //
-  //   sliderControl.addTo(map); // sequenceUI function body
-  //
-  //   // create Leaflet control for the current grade output
-  //   var gradeControl = L.control({
-  //     position: 'bottomleft'
-  //   });
-  //
-  //   // same as above
-  //   gradeControl.onAdd = function(map) {
-  //
-  //     var grade = L.DomUtil.get("current-grade");
-  //
-  //     L.DomEvent.disableScrollPropagation(grade);
-  //     L.DomEvent.disableClickPropagation(grade);
-  //
-  //     return grade;
-  //
-  //   }
-  //
-  //   gradeControl.addTo(map);
-  //
-  //   // select the grade output we just added to the map
-  //   var output = $('#current-grade span');
-  //
-  //   //select the slider's input and listen for change
-  //   $('#slider input[type=range]')
-  //     .on('input', function() {
-  //
-  //       // current value of slider is current grade level
-  //       var currentGrade = this.value;
-  //
-  //
-  //       // update the output
-  //       output.html(currentGrade);
-  //
-  //     });
-  //
-  //
-  // } //end of slider control
+  function sequenceUI(data) {
+
+    // create Leaflet control for the slider
+    var sliderControl = L.control({
+      position: 'bottomleft'
+    });
+
+    sliderControl.onAdd = function(map) {
+
+      var controls = L.DomUtil.get("slider");
+
+      L.DomEvent.disableScrollPropagation(controls);
+      L.DomEvent.disableClickPropagation(controls);
+
+      return controls;
+    }
+
+    sliderControl.addTo(map); // sequenceUI function body
+
+    // create Leaflet control for the current grade output
+    var gradeControl = L.control({
+      position: 'bottomleft'
+    });
+
+    // same as above
+    gradeControl.onAdd = function(map) {
+
+      var grade = L.DomUtil.get("current-grade");
+
+      L.DomEvent.disableScrollPropagation(grade);
+      L.DomEvent.disableClickPropagation(grade);
+
+      return grade;
+
+    }
+
+    gradeControl.addTo(map);
+
+    // select the grade output we just added to the map
+    var output = $('#current-grade span');
+
+    //select the slider's input and listen for change
+    $('#slider input[type=range]')
+      .on('input', function() {
+
+        // current value of slider is current grade level
+        var currentGrade = this.value;
+
+
+        // update the output
+        output.html(currentGrade);
+
+      });
+
+
+  } //end of slider control
 
   // d3 to create dropdown of all the streams
   function addFilter(data) {
@@ -171,13 +171,15 @@
     // array to hold select options
     var uniqueTypes = ["All Drainageways"];
 
+    //Log empty array and sample feature to console for testing before for each
     console.log(uniqueTypes)
-    // console.log(data.features.properties["length"])
+    console.log(data.features[1].properties["str_name"])
 
-    data.features.forEach(function(data){
-        var uniqueTypes = data.features.properties.type;
-        values.push(value);
-    })
+    //cycle through streams layer and add unique values to array to use for dropdown
+    for (i=0; i < data.features.length; i++){
+      if (!uniqueTypes.includes(data.features[i].properties["str_name"]))
+      uniqueTypes.push(data.features[i].properties["str_name"])
+    }
 
     // for (var key in data){
     //   var uniqueTypes = data.features.properties.str_name;
