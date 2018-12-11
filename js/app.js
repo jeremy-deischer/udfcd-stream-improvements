@@ -50,12 +50,10 @@
 
     var channelImprov = L.geoJson(data, {
       onEachFeature: function(feature, layer) {
-
         //Assigning color to each type of stream Improvements
         if (feature.properties.type.riprap) {
           layer.setStyle({
             color: 'red',
-            weight: 5
           });
         } else if (feature.properties.type.boulders) {
           layer.setStyle({
@@ -75,7 +73,6 @@
           });
         }
 
-        // riprap, boulders, excavation, lowFlow, toe
         // when mousing over a layer
         layer.on('mouseover', function() {
 
@@ -85,7 +82,7 @@
           }).bringToFront();
         });
 
-        // on mousing off layer
+        // when mousing off layer
         layer.on('mouseout', function() {
 
           // reset the layer style to its original stroke color
