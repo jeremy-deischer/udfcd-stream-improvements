@@ -181,11 +181,6 @@
       uniqueTypes.push(data.features[i].properties["str_name"])
     }
 
-    // for (var key in data){
-    //   var uniqueTypes = data.features.properties.str_name;
-    //   values.push(value);
-    // };
-
     // sort types alphabeticaly in array
     uniqueTypes.sort();
 
