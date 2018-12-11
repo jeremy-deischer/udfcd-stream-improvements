@@ -53,7 +53,7 @@
         //Assigning color to each type of stream Improvements
         if (feature.properties.type.riprap) {
           layer.setStyle({
-            color: 'red',
+            fillColor: 'red',
           });
         } else if (feature.properties.type.boulders) {
           layer.setStyle({
@@ -87,7 +87,7 @@
 
           // reset the layer style to its original stroke color
           layer.setStyle({
-            color: 'blue'
+            color: 'white'
           });
         });
 
