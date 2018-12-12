@@ -2,10 +2,10 @@
 
   var map = L.map('map', {
     zoomSnap: .1,
-    center: [39.75, -104.97],
-    zoom: 9,
-    minZoom: 10,
-    maxZoom: 20,
+    // center: [39.75, -104.97],
+    // zoom: 9,
+    // minZoom: 10,
+    // maxZoom: 20,
   });
 
   var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
@@ -38,39 +38,10 @@
     // here you could do other data clean-up/processing/binding
     // if you needed to
 
-    // when done, send to the drawMap function
-
+    // when done, send the datasets to the drawMap function
     drawMap(streamsData, districtData, channelImproveData);
-
+   
   }
-
-  // //AJAX call to load streams
-  // $.getJSON("data/Streams.json", function(data) {
-  //   var options = {
-  //     color: 'blue',
-  //     weight: 1
-  //   }
-  //   var streams = L.geoJson(data, options).addTo(map)
-
-  //   addFilter(data)
-  // });
-
-  // //AJAX call to load district boundary
-  // $.getJSON("data/District.json", function(data) {
-  //   //default option for styling
-  //   var options = {
-  //     color: 'gray',
-  //     weight: 5,
-  //     fillOpacity: 0,
-  //   }
-
-  //   var boundary = L.geoJson(data, options).addTo(map);
-  // });
-
-  // //AJAX call to load district boundary
-  // $.getJSON("data/channelimprov.json", function(data) {
-  //   drawMap(data)
-  // });
 
   function drawMap(streamsData, districtData, channelImproveData) {
 
@@ -87,10 +58,14 @@
       }
     }).addTo(map);
 
+    // set the extent of the map to the district bounds
+    map.fitBounds(district.getBounds(),{
+      padding: [20, 20]
+    });
+
     var streams = L.geoJson(streamsData, {
       style: function() {
         return {
-          color: 'blue',
           weight: 1
         }
       }
@@ -146,25 +121,34 @@
 
         layer.bindTooltip(improvementTooltip);
       }
-    }).addTo(map);
+
+    })
+    // .addTo(map);
+
+    // add the filter using the streamsData
+    addFilter(streamsData, streams);
 
   } // end drawMap()
 
   // d3 to create dropdown of all the streams
-  function addFilter(data) {
+  function addFilter(data, streams) {
+
+    // create Leaflet control to add the select container
+    // to the map
+    var selectControl = L.control({
+      position: 'topright'
+    });
+    selectControl.onAdd = function(map) {
+      return L.DomUtil.get("select-container");
+    }
+    selectControl.addTo(map);
 
     // select the map element
-    var dropdown = d3.select('#map')
-      .append('select') // append a new select element
-      .attr('class', 'filter') // add a class name
+    var dropdown = d3.select('#stream-select')
       .on('change', onchange) //listen for change
 
     // array to hold select options
-    var uniqueTypes = ["All Drainageways"];
-
-    //Log empty array and sample feature to console for testing before for each
-    console.log(uniqueTypes)
-    console.log(data.features[1].properties["str_name"])
+    var uniqueTypes = [];
 
     //cycle through streams layer and add unique values to array to use for dropdown
     for (i=0; i < data.features.length; i++){
@@ -192,13 +176,27 @@
     function onchange() {
       // get the current value from the select element
       var val = d3.select('select').property('value')
+      
+      // here you have access to the selected stream
+      console.log(val)
 
-      // style the display of the facilities
-      facilities.style("display", function(d) {
-        // if it's our default, show them all with inline
-        if (val === "All facilities") return "inline"
-        // otherwise, if each industry type doesn't match the value
-        if (d.year_of_st != val) return "none" // don't display it
+      // you can use Leaflet to loop through all the
+      // streams and see which one matches the selected one
+      streams.eachLayer(function(layer) {
+        if(layer.feature.properties.str_name == val) {
+          
+          // you have access to it here
+          console.log(layer)
+
+          // so now highlight it or something?
+          layer.setStyle({
+            color: 'orange',
+            weight: 4
+          })
+
+          // or fly to the bounds of it?
+          map.flyToBounds(layer.getBounds())
+        }
       })
     }
 
