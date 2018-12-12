@@ -150,63 +150,6 @@
 
   } // end drawMap()
 
-  function sequenceUI() {
-
-    // create Leaflet control for the slider
-    var sliderControl = L.control({
-      position: 'bottomleft'
-    });
-
-    sliderControl.onAdd = function(map) {
-
-      var controls = L.DomUtil.get("slider");
-
-      L.DomEvent.disableScrollPropagation(controls);
-      L.DomEvent.disableClickPropagation(controls);
-
-      return controls;
-    }
-
-    sliderControl.addTo(map); // sequenceUI function body
-
-    // create Leaflet control for the current grade output
-    var gradeControl = L.control({
-      position: 'bottomleft'
-    });
-
-    // same as above
-    gradeControl.onAdd = function(map) {
-
-      var grade = L.DomUtil.get("current-grade");
-
-      L.DomEvent.disableScrollPropagation(grade);
-      L.DomEvent.disableClickPropagation(grade);
-
-      return grade;
-
-    }
-
-    gradeControl.addTo(map);
-
-    // select the grade output we just added to the map
-    var output = $('#current-grade span');
-
-    //select the slider's input and listen for change
-    $('#slider input[type=range]')
-      .on('input', function() {
-
-        // current value of slider is current grade level
-        var currentGrade = this.value;
-
-
-        // update the output
-        output.html(currentGrade);
-
-      });
-
-
-  } //end of slider control
-
   // d3 to create dropdown of all the streams
   function addFilter(data) {
 
