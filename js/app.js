@@ -17,38 +17,86 @@
     accessToken: accessToken
   }).addTo(map);
 
+  // first load all data with deferred requests
+  var streamsJson= d3.json("data/Streams.json"),
+      districtJson = d3.json("data/District.json"),
+      channelImproveJson = d3.json("data/channelimprov.json");
 
-  //AJAX call to load streams
-  $.getJSON("data/Streams.json", function(data) {
-    var options = {
-      color: 'blue',
-      weight: 1
-    }
-    var streams = L.geoJson(data, options).addTo(map)
+  // then wait to make sure they're all loaded with a promise
+  Promise.all([streamsJson, districtJson, channelImproveJson])
+    .then(processData);  // send them into another function here
 
-    addFilter(data)
-  });
+  function processData(data) {
+    // data come in within an array
+    // can separate out here and assign
+    // to different variables
+    
+    var streamsData = data[0],
+        districtData = data[1],
+        channelImproveData = data[2];
 
-  //AJAX call to load district boundary
-  $.getJSON("data/District.json", function(data) {
-    //default option for styling
-    var options = {
-      color: 'gray',
-      weight: 5,
-      fillOpacity: 0,
-    }
+    // here you could do other data clean-up/processing/binding
+    // if you needed to
 
-    var boundary = L.geoJson(data, options).addTo(map);
-  });
+    // when done, send to the drawMap function
 
-  //AJAX call to load district boundary
-  $.getJSON("data/channelimprov.geojson", function(data) {
-    drawMap(data)
-  });
+    drawMap(streamsData, districtData, channelImproveData);
 
-  function drawMap(data) {
+  }
 
-    var channelImprov = L.geoJson(data, {
+  // //AJAX call to load streams
+  // $.getJSON("data/Streams.json", function(data) {
+  //   var options = {
+  //     color: 'blue',
+  //     weight: 1
+  //   }
+  //   var streams = L.geoJson(data, options).addTo(map)
+
+  //   addFilter(data)
+  // });
+
+  // //AJAX call to load district boundary
+  // $.getJSON("data/District.json", function(data) {
+  //   //default option for styling
+  //   var options = {
+  //     color: 'gray',
+  //     weight: 5,
+  //     fillOpacity: 0,
+  //   }
+
+  //   var boundary = L.geoJson(data, options).addTo(map);
+  // });
+
+  // //AJAX call to load district boundary
+  // $.getJSON("data/channelimprov.json", function(data) {
+  //   drawMap(data)
+  // });
+
+  function drawMap(streamsData, districtData, channelImproveData) {
+
+    // now you have all the data within this function
+    // you can create the separate Leaflet layer groups using it
+    // first ones added to the map are underneath the others
+
+    var district = L.geoJson(districtData, {
+      style: function() {
+        return {
+          color: 'yellow',
+          weight: 1
+        }
+      }
+    }).addTo(map);
+
+    var streams = L.geoJson(streamsData, {
+      style: function() {
+        return {
+          color: 'blue',
+          weight: 1
+        }
+      }
+    }).addTo(map);
+
+    var channelImprov = L.geoJson(channelImproveData, {
       onEachFeature: function(feature, layer) {
         //Assigning color to each type of stream Improvements
         if (feature.properties.type.riprap) {
@@ -102,7 +150,7 @@
 
   } // end drawMap()
 
-  function sequenceUI(data) {
+  function sequenceUI() {
 
     // create Leaflet control for the slider
     var sliderControl = L.control({
