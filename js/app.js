@@ -223,7 +223,7 @@
 
           // so now highlight it or something?
           layer.setStyle({
-            color: 'orange',
+            color: 'cyan',
             weight: 4
           })
 
