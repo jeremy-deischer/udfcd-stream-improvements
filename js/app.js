@@ -2,11 +2,7 @@
 
   var map = L.map('map', {
     zoomSnap: .1,
-    // center: [39.75, -104.97],
-    // zoom: 9,
-    // minZoom: 10,
-    // maxZoom: 20,
-  });
+      });
 
   var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
 
@@ -30,7 +26,7 @@
     // data come in within an array
     // can separate out here and assign
     // to different variables
-    
+
     var streamsData = data[0],
         districtData = data[1],
         channelImproveData = data[2];
@@ -40,7 +36,7 @@
 
     // when done, send the datasets to the drawMap function
     drawMap(streamsData, districtData, channelImproveData);
-   
+
   }
 
   function drawMap(streamsData, districtData, channelImproveData) {
@@ -52,8 +48,9 @@
     var district = L.geoJson(districtData, {
       style: function() {
         return {
-          color: 'yellow',
-          weight: 1
+          color: '#484848',
+          opacity: 0.6,
+          fillColor: 'none'
         }
       }
     }).addTo(map);
@@ -176,7 +173,7 @@
     function onchange() {
       // get the current value from the select element
       var val = d3.select('select').property('value')
-      
+
       // here you have access to the selected stream
       console.log(val)
 
@@ -184,7 +181,7 @@
       // streams and see which one matches the selected one
       streams.eachLayer(function(layer) {
         if(layer.feature.properties.str_name == val) {
-          
+
           // you have access to it here
           console.log(layer)
 
