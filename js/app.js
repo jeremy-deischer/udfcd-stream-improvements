@@ -2,7 +2,7 @@
 
   var map = L.map('map', {
     zoomSnap: .1,
-      });
+  });
 
   var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
 
@@ -14,13 +14,13 @@
   }).addTo(map);
 
   // first load all data with deferred requests
-  var streamsJson= d3.json("data/Streams.json"),
-      districtJson = d3.json("data/District.json"),
-      channelImproveJson = d3.json("data/channelimprov.json");
+  var streamsJson = d3.json("data/Streams.json"),
+    districtJson = d3.json("data/District.json"),
+    channelImproveJson = d3.json("data/channelimprov.json");
 
   // then wait to make sure they're all loaded with a promise
   Promise.all([streamsJson, districtJson, channelImproveJson])
-    .then(processData);  // send them into another function here
+    .then(processData); // send them into another function here
 
   function processData(data) {
     // data come in within an array
@@ -28,8 +28,8 @@
     // to different variables
 
     var streamsData = data[0],
-        districtData = data[1],
-        channelImproveData = data[2];
+      districtData = data[1],
+      channelImproveData = data[2];
 
     // here you could do other data clean-up/processing/binding
     // if you needed to
@@ -56,7 +56,7 @@
     }).addTo(map);
 
     // set the extent of the map to the district bounds
-    map.fitBounds(district.getBounds(),{
+    map.fitBounds(district.getBounds(), {
       padding: [20, 20]
     });
 
@@ -69,65 +69,94 @@
     }).addTo(map);
 
     var channelImprov = L.geoJson(channelImproveData, {
-      onEachFeature: function(feature, layer) {
-        // Assigning color to each type of stream Improvements
-        if (feature.properties.type.riprap) {
-          layer.setStyle({
-            fillColor: 'red',
+        style: function() {
+          return {
+            weight: 2
+          }
+        },
+        onEachFeature: function(feature, layer) {
+          // Assigning color to each type of stream Improvements
+          if (feature.properties.type === "boulders") {
+            layer.setStyle({
+              color: '#3288bd'
+            });
+          } else if (feature.properties.type === "SD") {
+            layer.setStyle({
+              color: '#fee08b'
+            });
+          } else if (feature.properties.type === "riprap") {
+            layer.setStyle({
+              color: '#d53e4f'
+            });
+          } else if (feature.properties.type === "Channel") {
+            layer.setStyle({
+              color: '#99d594'
+            });
+          } else if (feature.properties.type === "Excavation") {
+            layer.setStyle({
+              color: '#fc8d59'
+            });
+          } else
+            layer.setStyle({
+              color: 'e6f598'
+            });
+
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
           });
-        } else if (feature.properties.type.boulders) {
-          layer.setStyle({
-            color: 'green'
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+
+            // reset the layer style to its original stroke color
+            if (feature.properties.type === "boulders") {
+              layer.setStyle({
+                color: '#3288bd'
+              });
+            } else if (feature.properties.type === "SD") {
+              layer.setStyle({
+                color: '#fee08b'
+              });
+            } else if (feature.properties.type === "riprap") {
+              layer.setStyle({
+                color: '#d53e4f'
+              });
+            } else if (feature.properties.type === "Channel") {
+              layer.setStyle({
+                color: '#99d594'
+              });
+            } else if (feature.properties.type === "Excavation") {
+              layer.setStyle({
+                color: '#fc8d59'
+              });
+            } else
+              layer.setStyle({
+                color: 'e6f598'
+              });
           });
-        } else if (feature.properties.type.excavation) {
-          layer.setStyle({
-            color: 'blue'
-          });
-        } else if (feature.properties.type.lowflow) {
-          layer.setStyle({
-            color: 'yellow'
-          });
-        } else if (feature.properties.type.toe) {
-          layer.setStyle({
-            color: 'black'
-          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
         }
 
-        // when mousing over a layer
-        layer.on('mouseover', function() {
-
-          // change the stroke color and bring that element to the front
-          layer.setStyle({
-            color: 'yellow'
-          }).bringToFront();
-        });
-
-        // when mousing off layer
-        layer.on('mouseout', function() {
-
-          // reset the layer style to its original stroke color
-          layer.setStyle({
-            color: 'white'
-          });
-        });
-
-        //Create tooltip depending on whether cost data is available
-        if (feature.properties.current_co == 0){
-          var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
-           feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
-            '<br>' + 'Current Cost Estimate: Not available'
-        }
-        else{
-          var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
-           feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
-            '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
-
-        }
-        layer.bindTooltip(improvementTooltip);
-      }
-
-    })
-    .addTo(map);
+      })
+      .addTo(map);
 
     // add the filter using the streamsData
     addFilter(streamsData, streams);
@@ -155,9 +184,9 @@
     var uniqueTypes = [];
 
     //cycle through streams layer and add unique values to array to use for dropdown
-    for (i=0; i < data.features.length; i++){
+    for (i = 0; i < data.features.length; i++) {
       if (!uniqueTypes.includes(data.features[i].properties["str_name"]))
-      uniqueTypes.push(data.features[i].properties["str_name"])
+        uniqueTypes.push(data.features[i].properties["str_name"])
     }
 
     // sort types alphabeticaly in array
@@ -187,7 +216,7 @@
       // you can use Leaflet to loop through all the
       // streams and see which one matches the selected one
       streams.eachLayer(function(layer) {
-        if(layer.feature.properties.str_name == val) {
+        if (layer.feature.properties.str_name == val) {
 
           // you have access to it here
           console.log(layer)
