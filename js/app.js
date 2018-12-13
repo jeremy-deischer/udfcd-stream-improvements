@@ -70,7 +70,7 @@
 
     var channelImprov = L.geoJson(channelImproveData, {
       onEachFeature: function(feature, layer) {
-        //Assigning color to each type of stream Improvements
+        // Assigning color to each type of stream Improvements
         if (feature.properties.type.riprap) {
           layer.setStyle({
             fillColor: 'red',
@@ -111,16 +111,23 @@
           });
         });
 
-        //Create tooltip for channel improvement
-        var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
-         feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
-          '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString();
+        //Create tooltip depending on whether cost data is available
+        if (feature.properties.current_co == 0){
+          var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+           feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+            '<br>' + 'Current Cost Estimate: Not available'
+        }
+        else{
+          var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+           feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+            '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
 
+        }
         layer.bindTooltip(improvementTooltip);
       }
 
     })
-    // .addTo(map);
+    .addTo(map);
 
     // add the filter using the streamsData
     addFilter(streamsData, streams);
