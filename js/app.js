@@ -159,12 +159,12 @@
       .addTo(map);
 
     // add the filter using the streamsData
-    addFilter(streamsData, streams);
+    addFilter(streamsData, streams, channelImprov);
 
   } // end drawMap()
 
   // d3 to create dropdown of all the streams
-  function addFilter(data, streams) {
+  function addFilter(data, streams, channelImprov) {
 
     // create Leaflet control to add the select container
     // to the map
@@ -218,20 +218,31 @@
       streams.eachLayer(function(layer) {
         if (layer.feature.properties.str_name == val) {
 
-          // you have access to it here
+          // Access selected layer
           console.log(layer)
 
-          // so now highlight it or something?
+          // Highlight and zoom to selected stream
           layer.setStyle({
             color: 'cyan',
             weight: 4
           })
-
-          // or fly to the bounds of it?
           map.flyToBounds(layer.getBounds())
         }
       })
-    }
+
+      //use nest to sum the improvements
+      var data = d3.nest(channelImprov)
+        .key(function(layer){
+          console.log(layer.feature.properties.str_name);
+          return d.str_name
+        })
+        .rollup(function(s){
+          return d3.sum(s, function(d){
+            return d.current_co
+          })
+        })
+
+    } //end of onchange
 
   } //end of addFilter
 
