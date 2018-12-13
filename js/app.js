@@ -159,12 +159,12 @@
       .addTo(map);
 
     // add the filter using the streamsData
-    addFilter(streamsData, streams, channelImprov);
+    addFilter(streamsData, streams, channelImproveData);
 
   } // end drawMap()
 
   // d3 to create dropdown of all the streams
-  function addFilter(data, streams, channelImprov) {
+  function addFilter(data, streams, channelImproveData) {
 
     // create Leaflet control to add the select container
     // to the map
@@ -227,19 +227,25 @@
         }
       })
 
-      //use nest to sum the improvements
-      var nest = d3.nest()
-        .key(function(d){
-          return d.feature.propoerties.str_name;
-        })
-        .rollup(function(s){
-          return d3.sum(s,function(d){
-            return d.current_co;
-          })
-        })
+      console.log(channelImproveData);
+      console.log(channelImproveData.features[0].properties.str_name);
 
-        var nested = nest.entries(channelImprov);
-        console.log(nested);
+      //use nest to sum the improvements
+      var improveByStream = d3.nest()
+        .key(function(layer) {
+          return layer.feature.properties.str_name;
+          console.log(layer.feature.properties.str_name);
+        })
+        .rollup(function(v) {
+          return {
+            count: v.length,
+            total: d3.sum(v, function(d) {
+              return d.amount;
+            }),
+          };
+        })
+        .entries(channelImproveData);
+      console.log(JSON.stringify(improveByStream));
 
     } //end of onchange
 
