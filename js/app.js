@@ -192,9 +192,6 @@
     // sort types alphabeticaly in array
     uniqueTypes.sort();
 
-    //Log array of unique stream names to console.
-    console.log(uniqueTypes)
-
     // select all the options (that don't exist yet)
     dropdown.selectAll('option')
       .data(uniqueTypes).enter() // attach our array as data
@@ -231,16 +228,18 @@
       })
 
       //use nest to sum the improvements
-      var data = d3.nest(channelImprov)
-        .key(function(layer){
-          console.log(layer.feature.properties.str_name);
-          return d.str_name
+      var nest = d3.nest()
+        .key(function(d){
+          return d.feature.propoerties.str_name;
         })
         .rollup(function(s){
-          return d3.sum(s, function(d){
-            return d.current_co
+          return d3.sum(s,function(d){
+            return d.current_co;
           })
         })
+
+        var nested = nest.entries(channelImprov);
+        console.log(nested);
 
     } //end of onchange
 
