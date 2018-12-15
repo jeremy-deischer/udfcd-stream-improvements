@@ -242,10 +242,7 @@
           .rollup(function(d){
             return {
               "length": d.length
-              "Total Cost": d3.sum( , function(d){
-                return d.current_co;
-              })
-            }
+              }
           })
           .entries(channelImproveData.features)
 
