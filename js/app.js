@@ -233,12 +233,7 @@
           .key(function(k) {
             return k.properties.str_name;
           })
-          .rollup(function(k){
-            return {
-              "length":k.length
-            }
-          })
-          .entries(channelImproveData.features)
+                    .entries(channelImproveData.features)
 
             console.log(improveByStream)
             console.log(channelImproveData.features)
