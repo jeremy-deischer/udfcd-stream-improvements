@@ -243,7 +243,7 @@
             return {
               "length": d.length,
               "Cost": d3.sum(d,function(s){
-                return s.current_co;
+                return s.properties.current_co;
               })
               }
           })
