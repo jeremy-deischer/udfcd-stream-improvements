@@ -229,9 +229,9 @@
 
 
         //use nest to sum the improvements
-        var improveByStream = d3.nest(channelImproveData)
+        var improveByStream = d3.nest()
           .key(function(k) {
-            return k.str_name;
+            return k.properties.str_name;
           })
           .rollup(function(k){
             return {
@@ -241,6 +241,7 @@
           .entries(channelImproveData.features)
 
             console.log(improveByStream)
+            console.log(channelImproveData.features)
 
 
           } //end of onchange
