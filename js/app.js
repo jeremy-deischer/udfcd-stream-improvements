@@ -241,7 +241,10 @@
           //Use rollup to summarize number of improvements and total cost
           .rollup(function(d){
             return {
-              "length": d.length
+              "length": d.length,
+              "Cost": d3.sum(d,function(s){
+                return s.current_co;
+              })
               }
           })
           .entries(channelImproveData.features)
