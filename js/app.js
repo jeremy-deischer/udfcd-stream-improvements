@@ -228,15 +228,29 @@
         })
 
 
-        //use nest to sum the improvements
+        //use nest to group the improvements and summarize data
         var improveByStream = d3.nest()
+          //Use key to group all channel improvements by each stream name
           .key(function(k) {
             return k.properties.str_name;
           })
-                    .entries(channelImproveData.features)
+          //Use second key to summarize each type of improvement by each stream
+          .key(function(k){
+            return k.properties.type;
+          })
+          //Use rollup to summarize number of improvements and total cost
+          .rollup(function(d){
+            return {
+              "length": d.length
+              "Total Cost": d3.sum( , function(d){
+                return d.current_co;
+              })
+            }
+          })
+          .entries(channelImproveData.features)
 
+          //Log
             console.log(improveByStream)
-            console.log(channelImproveData.features)
 
 
           } //end of onchange
