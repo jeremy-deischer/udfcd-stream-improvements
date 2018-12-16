@@ -15,16 +15,57 @@
 <body>
 
   <div class='flex-parent viewport-full relative scroll-hidden'>
-    <div class='flex-child w-full w300-ml absolute static-ml left bottom'>
+    <div class='flex-child w-full w600-ml absolute static-ml left bottom'>
       <div class='flex-parent flex-parent--column viewport-third h-full-ml hmax-full bg-white py18 px12'>
         <div class='flex-child flex-child--grow px12 py12 scroll-auto'>
           <h1 class='txt-h3 mb6'>Stream Improvements within UDFCD</h1>
           <p>Exploring stream improvements proposed in UDFCD studies dating back to 1980</p>
+          <table class='table' id="info-table">
+            <thead>
+              <tr>
+                <th>Improvement Type</th>
+                <th>Number of Improvements</th>
+                <th>Total Cost of Improvements</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Storm Drain</td>
+                <td><span class="storm-drain-number"> --</span></td>
+                <td><span class="storm-drain-cost"> --</span></td>
+              </tr>
+              <tr>
+                <td>Boulders</td>
+                <td><span class="boulders-number"> --</span></td>
+                <td><span class="boulders-cost"> --</span></td>
+              </tr>
+              <tr>
+                <td>Riprap</td>
+                <td><span class="riprap-number"> --</span></td>
+                <td><span class="riprap-cost"> --</span></td>
+              </tr>
+              <tr>
+                <td>Channel</td>
+                <td><span class="channel-number"> --</span></td>
+                <td><span class="channel-cost"> --</span></td>
+              </tr>
+              <tr>
+                <td>Excavation</td>
+                <td><span class="excavation-number"> --</span></td>
+                <td><span class="excavation-cost"> --</span></td>
+              </tr>
+              <tr>
+                <td>Other / Unclassified</td>
+                <td><span class="other-number"> --</span></td>
+                <td><span class="other-cost"> --</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <footer class='px12 py12 bg-gray-faint txt-s'>
           <ul>
             <li>
-                <footer class='px12 py12 bg-gray-faint txt-s'>
+              <footer class='px12 py12 bg-gray-faint txt-s'>
                 <ul>
                   <li>Explore more available data from UDFCD at
                     <a class='link' target="_blank" href='http://data.opencolorado.org/dataset?q=udfcd'>Open Data Colorado</a>
@@ -41,16 +82,11 @@
     </div>
   </div>
 
-  <!-- current grade -->
-   <div id='current-grade' class='py6 px12 bg-white border border--gray-light round'>
-    <p class='txt-bold txt-headline'>Grade:
-      <span>1</span>
-    </p>
-  </div>
-
-  <!-- ui slider -->
-   <div id='slider' class='range w240 bg-white round-ml px12 z-index: -1'>
-    <input type='range' min="1976" , max="2017" , value="1976" , step="1" />
+  <div class='select-container bg-white' id='select-container'>
+    <select class='select' id="stream-select">
+      <option>All Drainageways</option>
+    </select>
+    <div class='select-arrow'></div>
   </div>
 
   <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.23.1/assembly.js"></script>
