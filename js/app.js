@@ -158,8 +158,48 @@
       })
       .addTo(map);
 
+    function drawLegend() {
+      //create new leaflet object and assign position
+      var legend = L.control({
+        position: 'bottomleft'
+      });
+
+      // when the legend is added to the map
+      legend.onAdd = function() {
+
+        // create a new HTML <div> element and give it a class name of "legend"
+        var div = L.DomUtil.create('div', 'legend');
+
+        // first append an <h3> tag to the div holding the current attribute
+        // and norm values (i.e., the mapped phenomena)
+        div.innerHTML = "<h3> Average County Rent Price</h3>";
+
+        // for each of our breaks
+        for (var i = 0; i < breaks.length; i++) {
+          // determine the color associated with each break value,
+          // including the lower range value
+          var color = getColor(breaks[i][0], breaks);
+
+          // concatenate a <span> tag styled with the color and the range values
+          // of that class and include a label with the low and a high ends of that class range
+          div.innerHTML +=
+            '<span style="background:' + color + '"></span> ' +
+            '<label>$' + breaks[i][0].toLocaleString() + ' &mdash; $' +
+            breaks[i][1].toLocaleString() + '</label>';
+        }
+
+        // return the populated div to be added to the map
+        return div;
+      };
+
+      // add the legend to the map
+      legend.addTo(map);
+
+    } //end of drawlengend
+
     // add the filter using the streamsData
     addFilter(streamsData, streams, channelImproveData);
+
 
   } // end drawMap()
 
@@ -268,22 +308,22 @@
       //   for (var i = 0; i < improveByStream.["val"].length; i++ ){
       //
       //   }
-        // creating all cells
-        // for (var i = 0; i < 2; i++) {
-        //   // creates a table row
-        //   var row = document.createElement("tr");
-        //
-        //   for (var j = 0; j < 2; j++) {
-        //     // Create a <td> element and a text node, make the text
-        //     // node the contents of the <td>, and put the <td> at
-        //     // the end of the table row
-        //     var cell = document.createElement("td");
-        //     var cellText = document.createTextNode("cell in row " + i + ", column " + j);
-        //     cell.appendChild(cellText);
-        //     row.appendChild(cell);
-        //   }
+      // creating all cells
+      // for (var i = 0; i < 2; i++) {
+      //   // creates a table row
+      //   var row = document.createElement("tr");
+      //
+      //   for (var j = 0; j < 2; j++) {
+      //     // Create a <td> element and a text node, make the text
+      //     // node the contents of the <td>, and put the <td> at
+      //     // the end of the table row
+      //     var cell = document.createElement("td");
+      //     var cellText = document.createTextNode("cell in row " + i + ", column " + j);
+      //     cell.appendChild(cellText);
+      //     row.appendChild(cell);
+      //   }
 
-          // add the row to the end of the table body
+      // add the row to the end of the table body
       //     tblBody.appendChild(row);
       //   }
       //
