@@ -70,8 +70,8 @@
         }
       }).addTo(map);
 
-
-    var channelImprov = L.geoJson(channelImproveData, {
+      //Load layer and filter to be boulder improvements
+    var channelImprovBoulders = L.geoJson(channelImproveData, {
         style: function() {
           return {
             weight: 2,
@@ -120,10 +120,60 @@
       })
       .addTo(map);
 
+      //Load layer and filter to be storm drain improvements
+      var channelImprovStormDrain = L.geoJson(channelImproveData, {
+          style: function() {
+            return {
+              weight: 2,
+              color: '#fee08b'
+            }
+          },
+          //filter only
+          filter: function(feature){
+            if(feature.properties.type === "SD"){
+              return feature;
+            }
+          },
+          onEachFeature: function(feature, layer) {
+
+            // when mousing over a layer
+            layer.on('mouseover', function() {
+
+              // change the stroke color and bring that element to the front
+              layer.setStyle({
+                color: 'yellow'
+              }).bringToFront();
+            });
+
+            // when mousing off layer
+            layer.on('mouseout', function() {
+              //change back to original color
+              layer.setStyle({
+                color: '#fee08b'
+              })
+            });
+
+            //Create tooltip depending on whether cost data is available
+            if (feature.properties.current_co == 0) {
+              var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+                feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+                '<br>' + 'Current Cost Estimate: Not available'
+            } else {
+              var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+                feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+                '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+            }
+            layer.bindTooltip(improvementTooltip);
+          }
+
+        })
+        .addTo(map);
+
     // Layer Controls
     var sourceLabels = {
-      "<b style='color:#3288bd'>Fire Stations</b>": channelImprov,
-      "<b style='color:#9400D3'>After School Programs</b>": district,
+      "<b style='color:#3288bd'>Boulders</b>": channelImprovBoulders,
+      "<b style='color:#fee08b'>Storm Drain</b>": channelImprovStormDrain,
       "<b style='color:#1f78b4'>Food Stores</b>": streams
     }
 
