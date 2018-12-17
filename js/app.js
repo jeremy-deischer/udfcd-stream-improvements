@@ -1,76 +1,76 @@
 (function() {
 
-    var map = L.map('map', {
-      zoomSnap: .1,
-    });
+  var map = L.map('map', {
+    zoomSnap: .1,
+  });
 
-    var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
+  var accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJjaXBwc2V1ZnMwNGY3ZmptMzQ3ZmJ0ZXE1In0.mo_STWygoqFqRI-od05qFg'
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken, {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18,
-      id: 'mapbox.outdoors',
-      accessToken: accessToken
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken, {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.outdoors',
+    accessToken: accessToken
+  }).addTo(map);
+
+  // first load all data with deferred requests
+  var streamsJson = d3.json("data/Streams.json"),
+    districtJson = d3.json("data/District.json"),
+    channelImproveJson = d3.json("data/channelimprov.json");
+
+  // then wait to make sure they're all loaded with a promise
+  Promise.all([streamsJson, districtJson, channelImproveJson])
+    .then(processData); // send them into another function here
+
+
+  function processData(data) {
+    // data come in within an array
+    // can separate out here and assign
+    // to different variables
+
+    var streamsData = data[0],
+      districtData = data[1],
+      channelImproveData = data[2];
+
+    // here you could do other data clean-up/processing/binding
+    // if you needed to
+
+    // when done, send the datasets to the drawMap function
+    drawMap(streamsData, districtData, channelImproveData);
+    drawLegend();
+
+  }
+
+  function drawMap(streamsData, districtData, channelImproveData) {
+
+    // now you have all the data within this function
+    // you can create the separate Leaflet layer groups using it
+    // first ones added to the map are underneath the others
+
+    var district = L.geoJson(districtData, {
+      style: function() {
+        return {
+          color: '#484848',
+          opacity: 0.6,
+          fillColor: 'none'
+        }
+      }
     }).addTo(map);
 
-    // first load all data with deferred requests
-    var streamsJson = d3.json("data/Streams.json"),
-      districtJson = d3.json("data/District.json"),
-      channelImproveJson = d3.json("data/channelimprov.json");
+    // set the extent of the map to the district bounds
+    map.fitBounds(district.getBounds(), {
+      padding: [20, 20]
+    });
 
-    // then wait to make sure they're all loaded with a promise
-    Promise.all([streamsJson, districtJson, channelImproveJson])
-      .then(processData); // send them into another function here
-
-
-    function processData(data) {
-      // data come in within an array
-      // can separate out here and assign
-      // to different variables
-
-      var streamsData = data[0],
-        districtData = data[1],
-        channelImproveData = data[2];
-
-      // here you could do other data clean-up/processing/binding
-      // if you needed to
-
-      // when done, send the datasets to the drawMap function
-      drawMap(streamsData, districtData, channelImproveData);
-      drawLegend();
-
-    }
-
-    function drawMap(streamsData, districtData, channelImproveData) {
-
-      // now you have all the data within this function
-      // you can create the separate Leaflet layer groups using it
-      // first ones added to the map are underneath the others
-
-      var district = L.geoJson(districtData, {
-        style: function() {
-          return {
-            color: '#484848',
-            opacity: 0.6,
-            fillColor: 'none'
-          }
+    var streams = L.geoJson(streamsData, {
+      style: function() {
+        return {
+          weight: 1
         }
-      }).addTo(map);
+      }
+    }).addTo(map);
 
-      // set the extent of the map to the district bounds
-      map.fitBounds(district.getBounds(), {
-        padding: [20, 20]
-      });
-
-      var streams = L.geoJson(streamsData, {
-        style: function() {
-          return {
-            weight: 1
-          }
-        }
-      }).addTo(map);
-
-      //Load layer and filter to be boulder improvements
+    //Load layer and filter to be boulder improvements
     var channelImprovBoulders = L.geoJson(channelImproveData, {
         style: function() {
           return {
@@ -79,8 +79,8 @@
           }
         },
         //filter only
-        filter: function(feature){
-          if(feature.properties.type === "boulders"){
+        filter: function(feature) {
+          if (feature.properties.type === "boulders") {
             return feature;
           }
         },
@@ -120,8 +120,258 @@
       })
       .addTo(map);
 
-      //Load layer and filter to be storm drain improvements
-      var channelImprovStormDrain = L.geoJson(channelImproveData, {
+    //Load layer and filter to be storm drain improvements
+    var channelImprovStormDrain = L.geoJson(channelImproveData, {
+        style: function() {
+          return {
+            weight: 2,
+            color: '#fee08b'
+          }
+        },
+        //filter only
+        filter: function(feature) {
+          if (feature.properties.type === "SD") {
+            return feature;
+          }
+        },
+        onEachFeature: function(feature, layer) {
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
+          });
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+            //change back to original color
+            layer.setStyle({
+              color: '#fee08b'
+            })
+          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
+        }
+
+      })
+      .addTo(map);
+
+    //Load layer and filter to be storm drain improvements
+    var channelImprovRiprap = L.geoJson(channelImproveData, {
+        style: function() {
+          return {
+            weight: 2,
+            color: '#d53e4f'
+          }
+        },
+        //filter only
+        filter: function(feature) {
+          if (feature.properties.type === "riprap") {
+            return feature;
+          }
+        },
+        onEachFeature: function(feature, layer) {
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
+          });
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+            //change back to original color
+            layer.setStyle({
+              color: '#d53e4f'
+            })
+          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
+        }
+
+      })
+      .addTo(map);
+
+    //Load layer and filter to be storm drain improvements
+    var channelImprovChannel = L.geoJson(channelImproveData, {
+        style: function() {
+          return {
+            weight: 2,
+            color: '#99d594'
+          }
+        },
+        //filter only
+        filter: function(feature) {
+          if (feature.properties.type === "Channel") {
+            return feature;
+          }
+        },
+        onEachFeature: function(feature, layer) {
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
+          });
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+            //change back to original color
+            layer.setStyle({
+              color: '#99d594'
+            })
+          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
+        }
+
+      })
+      .addTo(map);
+
+    //Load layer and filter to be storm drain improvements
+    var channelImprovStormDrain = L.geoJson(channelImproveData, {
+        style: function() {
+          return {
+            weight: 2,
+            color: '#fee08b'
+          }
+        },
+        //filter only
+        filter: function(feature) {
+          if (feature.properties.type === "SD") {
+            return feature;
+          }
+        },
+        onEachFeature: function(feature, layer) {
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
+          });
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+            //change back to original color
+            layer.setStyle({
+              color: '#fee08b'
+            })
+          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
+        }
+
+      })
+      .addTo(map);
+
+    //Load layer and filter to be storm drain improvements
+    var channelImprovExcavation = L.geoJson(channelImproveData, {
+        style: function() {
+          return {
+            weight: 2,
+            color: '#fc8d59'
+          }
+        },
+        //filter only
+        filter: function(feature) {
+          if (feature.properties.type === "Excavation") {
+            return feature;
+          }
+        },
+        onEachFeature: function(feature, layer) {
+
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: 'yellow'
+            }).bringToFront();
+          });
+
+          // when mousing off layer
+          layer.on('mouseout', function() {
+            //change back to original color
+            layer.setStyle({
+              color: '#fc8d59'
+            })
+          });
+
+          //Create tooltip depending on whether cost data is available
+          if (feature.properties.current_co == 0) {
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: Not available'
+          } else {
+            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+              feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
+              '<br>' + 'Current Cost Estimate: $' + feature.properties.current_co.toLocaleString()
+
+          }
+          layer.bindTooltip(improvementTooltip);
+        }
+
+      })
+      .addTo(map);
+
+      //Load layer and filter to be other / unclassified
+      var channelImprovOther = L.geoJson(channelImproveData, {
           style: function() {
             return {
               weight: 2,
@@ -129,8 +379,8 @@
             }
           },
           //filter only
-          filter: function(feature){
-            if(feature.properties.type === "SD"){
+          filter: function(feature) {
+            if (feature.properties.type === "SD") {
               return feature;
             }
           },
@@ -170,11 +420,15 @@
         })
         .addTo(map);
 
+
     // Layer Controls
     var sourceLabels = {
       "<b style='color:#3288bd'>Boulders</b>": channelImprovBoulders,
       "<b style='color:#fee08b'>Storm Drain</b>": channelImprovStormDrain,
-      "<b style='color:#1f78b4'>Food Stores</b>": streams
+      "<b style='color:#d53e4f'>Riprap</b>": channelImprovRiprap,
+      "<b style='color:#99d594'>Channel</b>": channelImprovChannel,
+      "<b style='color:#fc8d59'>Excavation</b>": channelImprovExcavation,
+      "<b style='color:#e6f598'>Other</b>": channelImprovOther,
     }
 
     L.control.layers(null, sourceLabels, {
