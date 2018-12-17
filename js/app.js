@@ -22,6 +22,7 @@
   Promise.all([streamsJson, districtJson, channelImproveJson])
     .then(processData); // send them into another function here
 
+
   function processData(data) {
     // data come in within an array
     // can separate out here and assign
@@ -144,7 +145,7 @@
 
           //Create tooltip depending on whether cost data is available
           if (feature.properties.current_co == 0) {
-            var improvementTooltip = feature.properties.item + '<br>' + 'Study: ' +
+            var improvementTooltip = 'Type: ' + feature.properties.item + '<br>' + 'Study: ' +
               feature.properties.mdp_osp_st + ' ' + feature.properties.year_of_st +
               '<br>' + 'Current Cost Estimate: Not available'
           } else {
@@ -164,52 +165,6 @@
 
 
   } // end drawMap()
-
-  // function drawLegend() {
-  //   //create new leaflet object and assign position
-  //   var legend = L.control({
-  //     position: 'bottomleft'
-  //   });
-  //
-  //   // when the legend is added to the map
-  //   legend.onAdd = function() {
-  //
-  //     // create a new HTML <div> element and give it a class name of "legend"
-  //     var div = L.DomUtil.create('div', 'legend');
-  //
-  //     // first append an <h3> tag to the div holding the current attribute
-  //     // and norm values (i.e., the mapped phenomena)
-  //     div.innerHTML = "<h3> Type of Stream Improvement</h3>" + "<br>" +
-  //     '<span style="background:' + color + '"></span> ';
-  //   // "<h3> Storm Drain </h3> "
-  //   // Boulders
-  //   // Riprap
-  //   // Channel
-  //   // Excavation
-  //   // Other / Unclassified
-  //
-  //     // // for each of our breaks
-  //     // for (var i = 0; i < breaks.length; i++) {
-  //     //   // determine the color associated with each break value,
-  //     //   // including the lower range value
-  //     //   var color = getColor(breaks[i][0], breaks);
-  //     //
-  //     //   // concatenate a <span> tag styled with the color and the range values
-  //     //   // of that class and include a label with the low and a high ends of that class range
-  //     //   div.innerHTML +=
-  //     //     '<span style="background:' + color + '"></span> ' +
-  //     //     '<label>$' + breaks[i][0].toLocaleString() + ' &mdash; $' +
-  //     //     breaks[i][1].toLocaleString() + '</label>';
-  //     // }
-  //
-  //     // return the populated div to be added to the map
-  //     return div;
-  //   };
-  //
-  //   // add the legend to the map
-  //   legend.addTo(map);
-  //
-  // } //end of drawlengend
 
 
   // d3 to create dropdown of all the streams
