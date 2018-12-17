@@ -99,7 +99,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#3288bd'
+              color: '#e41a1c'
             })
           });
 
@@ -125,7 +125,7 @@
         style: function() {
           return {
             weight: 2,
-            color: '#fee08b'
+            color: '#4daf4a'
           }
         },
         //filter only
@@ -149,7 +149,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#fee08b'
+              color: '#4daf4a'
             })
           });
 
@@ -175,7 +175,7 @@
         style: function() {
           return {
             weight: 2,
-            color: '#d53e4f'
+            color: '#984ea3'
           }
         },
         //filter only
@@ -199,7 +199,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#d53e4f'
+              color: '#984ea3'
             })
           });
 
@@ -225,7 +225,7 @@
         style: function() {
           return {
             weight: 2,
-            color: '#99d594'
+            color: '#ff7f00'
           }
         },
         //filter only
@@ -249,7 +249,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#99d594'
+              color: '#ff7f00'
             })
           });
 
@@ -275,7 +275,7 @@
         style: function() {
           return {
             weight: 2,
-            color: '#fc8d59'
+            color: '#a65628'
           }
         },
         //filter only
@@ -299,7 +299,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#fc8d59'
+              color: '#a65628'
             })
           });
 
@@ -325,7 +325,7 @@
         style: function() {
           return {
             weight: 2,
-            color: '#fee08b'
+            color: '#f781bf'
           }
         },
         //filter only features not contained in other filters
@@ -355,7 +355,7 @@
           layer.on('mouseout', function() {
             //change back to original color
             layer.setStyle({
-              color: '#fee08b'
+              color: '#f781bf'
             })
           });
 
@@ -379,12 +379,12 @@
 
     // Layer Controls
     var sourceLabels = {
-      "<b style='color:#3288bd'>Boulders</b>": channelImprovBoulders,
-      "<b style='color:#fee08b'>Storm Drain</b>": channelImprovStormDrain,
-      "<b style='color:#d53e4f'>Riprap</b>": channelImprovRiprap,
-      "<b style='color:#99d594'>Channel</b>": channelImprovChannel,
-      "<b style='color:#fc8d59'>Excavation</b>": channelImprovExcavation,
-      "<b style='color:#e6f598'>Other</b>": channelImprovOther,
+      "<b style='color:#e41a1c'>Boulders</b>": channelImprovBoulders,
+      "<b style='color:#4daf4a'>Storm Drain</b>": channelImprovStormDrain,
+      "<b style='color:#984ea3'>Riprap</b>": channelImprovRiprap,
+      "<b style='color:#ff7f00'>Channel</b>": channelImprovChannel,
+      "<b style='color:#a65628'>Excavation</b>": channelImprovExcavation,
+      "<b style='color:#f781bf'>Other</b>": channelImprovOther,
     }
 
     L.control.layers(null, sourceLabels,{collapsed: false,
