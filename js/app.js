@@ -328,9 +328,15 @@
             color: '#fee08b'
           }
         },
-        //filter only
+        //filter only features not contained in other filters
         filter: function(feature) {
-          if (feature.properties.type === "SD") {
+          if (feature.properties.type === "boulders" |
+          feature.properties.type === "SD" |
+          feature.properties.type === "riprap" |
+          feature.properties.type === "Channel" |
+          feature.properties.type === "Excavation" )
+          {}
+          else{
             return feature;
           }
         },
