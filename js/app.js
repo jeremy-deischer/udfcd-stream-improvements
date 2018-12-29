@@ -75,10 +75,10 @@
         style: function() {
           return {
             weight: 2,
-            color: '#3288bd'
+            color: '#e41a1c'
           }
         },
-        //filter only
+        //filter only boulders
         filter: function(feature) {
           if (feature.properties.type === "boulders") {
             return feature;
@@ -375,7 +375,6 @@
 
       })
       .addTo(map);
-
 
     // Layer Controls
     var sourceLabels = {
